@@ -19,9 +19,11 @@ jobs:
 
       - name: Build Project
         run: |
-          # 1. 使用新版参数 --omit=optional 彻底排除 Mac 专用依赖
-          # 2. 如果还是报错，增加 --force 强制执行
-          npm install --omit=optional --legacy-peer-deps || npm install --legacy-peer-deps --force
+          # 1. 核心修复：删除 Mac 生成的锁定文件，让 Linux 机器人重新解析依赖
+          rm -f package-lock.json
+          
+          # 2. 重新安装依赖（在 Linux 环境下生成纯净的依赖树）
+          npm install --legacy-peer-deps
           
           # 3. 执行打包
           npm run build
