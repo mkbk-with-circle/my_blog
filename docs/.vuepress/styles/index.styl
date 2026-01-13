@@ -1,5 +1,39 @@
+// ============================================================
+// 1. 首页特性卡片 (Features) 绝对居中布局优化
+// ============================================================
+.home-wrapper .features
+  display: flex !important          // 强制启用弹性布局
+  flex-wrap: wrap !important        // 允许换行
+  justify-content: center !important // 核心：无论几行，内容永远水平居中对齐
+  margin: 0 auto !important
+  padding: 2rem 0 !important
+  border-top: none !important       // 如果不需要那根分割线可以加上这行
 
-// 评论区颜色重置
+.home-wrapper .feature
+  flex: 0 0 28% !important          // 核心：固定宽度占比，不随行数伸缩（28% 刚好一行三个）
+  max-width: 28% !important         // 限制最大宽度
+  text-align: center !important     // 文字居中
+  margin: 1rem 1% !important        // 卡片之间的间距
+  float: none !important            // 彻底禁用可能存在的浮动布局
+  transition: all .3s               // 加上丝滑的悬停动画
+  
+  &:hover
+    transform: translateY(-5px)     // 鼠标指上去会轻轻浮起
+
+// 针对平板和手机的适配
+@media (max-width: 959px)
+  .home-wrapper .feature
+    flex: 0 0 45% !important        // 平板上一行两个
+    max-width: 45% !important
+
+@media (max-width: $MQMobile)
+  .home-wrapper .feature
+    flex: 0 0 90% !important        // 手机上一行一个
+    max-width: 90% !important
+
+// ============================================================
+// 2. Gitalk 评论区样式重置
+// ============================================================
 .gt-container
   .gt-ico-tip
     &::after
@@ -31,13 +65,14 @@
     .gt-comment-body
       color var(--textColor)!important
 
-
-// qq徽章
+// ============================================================
+// 3. 社交图标 - QQ徽章样式
+// ============================================================
 .qq
   position: relative;
 .qq::after
-  content: "可撩";
-  background: $accentColor;
+  content: "可撩";           // 在QQ图标旁显示的文字
+  background: $accentColor;  // 使用主题主色调
   color:#fff;
   padding: 0 5px;
   border-radius: 10px;
@@ -47,7 +82,9 @@
   right: -35px;
   transform:scale(0.85);
 
-// demo模块图标颜色
+// ============================================================
+// 4. 代码演示模块 (Demo Block) 图标颜色
+// ============================================================
 body .vuepress-plugin-demo-block__wrapper
   &,.vuepress-plugin-demo-block__display
     border-color rgba(160,160,160,.3)
@@ -58,15 +95,17 @@ body .vuepress-plugin-demo-block__wrapper
     svg
       fill: $accentColor !important;
 
-// 全文搜索框
+// ============================================================
+// 5. 全文搜索框 (Search Suggestions) 样式优化
+// ============================================================
 .suggestions
   overflow: auto
-  max-height: calc(100vh - 6rem)
-  @media (max-width: 719px) {
+  max-height: calc(100vh - 6rem) // 防止搜索结果超出屏幕高度
+  @media (max-width: 719px) {    // 针对移动端的搜索框宽度优化
     width: 90vw;
     min-width: 90vw!important;
     margin-right: -20px;
   }
   .highlight
-    color: $accentColor
+    color: $accentColor          // 搜索关键词高亮颜色
     font-weight: bold
