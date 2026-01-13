@@ -3,7 +3,7 @@ name: Deploy to BT Server
 on:
   push:
     branches:
-      - master # 匹配你现在的 master 分支
+      - master # 确保这里匹配你的主分支名称
 
 jobs:
   deploy:
@@ -15,19 +15,21 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21' # 或者你本地使用的版本
+          node-version: '20' # 使用稳定版 Node 20
 
       - name: Build Project
         run: |
-          npm install
+          # 核心修复：--no-optional 跳过 Mac 专用插件，--legacy-peer-deps 防止依赖冲突
+          npm install --no-optional --legacy-peer-deps
           npm run build
 
       - name: Sync to Server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_PASS }}
-          ARGS: "-avz --delete"
-          SOURCE: "docs/.vuepress/dist/" # Vdoing 默认打包目录
-          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-          REMOTE_USER: ${{ secrets.SERVER_USER }}
-          TARGET: "/www/wwwroot/8.141.7.250" # 你的宝塔目录
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASS }}
+          port: 22
+          source: "docs/.vuepress/dist/*" # 编译后的静态文件路径
+          target: "/www/wwwroot/8.141.7.250" # 宝塔面板中的网站根目录
+          strip_components: 3 # 关键：去掉 source 路径的前三层，直接把 dist 下的内容传过去
