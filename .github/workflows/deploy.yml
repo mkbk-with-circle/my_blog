@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
-          port: 22
+          port: 45328
           source: "docs/.vuepress/dist/*"
           target: "/www/wwwroot/8.141.7.250"
           strip_components: 3
