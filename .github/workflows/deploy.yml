@@ -19,13 +19,16 @@ jobs:
 
       - name: Build Project
         run: |
-          # 1. 核心修复：删除 Mac 生成的锁定文件，让 Linux 机器人重新解析依赖
+          # 1. 物理抹除：直接从 package.json 中删除关于 fsevents 的行（核心修复）
+          sed -i '/fsevents/d' package.json
+          
+          # 2. 清理环境：删除可能存在的锁定文件
           rm -f package-lock.json
           
-          # 2. 重新安装依赖（在 Linux 环境下生成纯净的依赖树）
-          npm install --legacy-peer-deps
+          # 3. 强力安装：增加 --ignore-scripts 阻止任何插件尝试在 Linux 上编译 Mac 代码
+          npm install --legacy-peer-deps --ignore-scripts
           
-          # 3. 执行打包
+          # 4. 执行打包
           npm run build
 
       - name: Sync to Server
