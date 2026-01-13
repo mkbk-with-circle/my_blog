@@ -1,0 +1,33 @@
+name: Deploy to BT Server
+
+on:
+  push:
+    branches:
+      - master # 匹配你现在的 master 分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21' # 或者你本地使用的版本
+
+      - name: Build Project
+        run: |
+          npm install
+          npm run build
+
+      - name: Sync to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_PASS }}
+          ARGS: "-avz --delete"
+          SOURCE: "docs/.vuepress/dist/" # Vdoing 默认打包目录
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          REMOTE_USER: ${{ secrets.SERVER_USER }}
+          TARGET: "/www/wwwroot/8.141.7.250" # 你的宝塔目录
