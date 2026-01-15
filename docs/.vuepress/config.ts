@@ -36,7 +36,7 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
           { text: '归档', link: '/archives/' },
         ],
       },
-      { text: '关于', link: '/about/' },
+      { text: '关于', link: '/about/about.md' },
     ],
     sidebarDepth: 2, 
     logo: '/img/logo.png', 
@@ -101,15 +101,16 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
         name: '玛卡巴卡',
       }
     },
-    htmlModules
+    // htmlModuless
   },
 
   // 注入到页面<head>中的标签
   head: [
     ['link', { rel: 'icon', href: '/img/favicon.ico' }], 
     ['meta', { name: 'keywords', content: '玛卡巴卡,博客,技术分享' }],
-    ['meta', { name: 'theme-color', content: '#11a8cd' }], 
-  ],
+    ['meta', { name: 'theme-color', content: '#11a8cd' }],
+    ['script', { src: '/js/click-fireworks.js' }],
+  ], 
 
   // 插件配置
   plugins: <UserPlugins>[
