@@ -1,43 +1,47 @@
 // ============================================================
-// 1. 首页特性卡片 (Features) 绝对居中布局优化
+// 1. 首页特性卡片 (Features) 布局优化
+// 作用：让首页的三个/多个卡片无论多少都能水平居中，并增加悬停浮起动画
 // ============================================================
 .home-wrapper .features
   display: flex !important          // 强制启用弹性布局
-  flex-wrap: wrap !important        // 允许换行
-  justify-content: center !important // 核心：无论几行，内容永远水平居中对齐
+  flex-wrap: wrap !important        // 允许卡片自动换行
+  justify-content: center !important // 核心：内容永远水平居中对齐
   margin: 0 auto !important
   padding: 2rem 0 !important
-  border-top: none !important       // 如果不需要那根分割线可以加上这行
+  border-top: none !important       // 去掉卡片上方的分割线
 
 .home-wrapper .feature
-  flex: 0 0 28% !important          // 核心：固定宽度占比，不随行数伸缩（28% 刚好一行三个）
+  flex: 0 0 28% !important          // 固定宽度占比（约一行三个）
   max-width: 28% !important         // 限制最大宽度
-  text-align: center !important     // 文字居中
-  margin: 1rem 1% !important        // 卡片之间的间距
-  float: none !important            // 彻底禁用可能存在的浮动布局
-  transition: all .3s               // 加上丝滑的悬停动画
+  text-align: center !important     // 文字内容居中
+  margin: 1rem 1% !important        // 卡片之间的左右间距
+  float: none !important            // 禁用旧版的浮动布局
+  transition: all .3s               // 增加 0.3 秒的平滑过渡效果
   
   &:hover
-    transform: translateY(-5px)     // 鼠标指上去会轻轻浮起
+    transform: translateY(-5px)     // 鼠标悬停时，卡片向上浮动 5 像素
 
-// 针对平板和手机的适配
+// 针对平板设备的适配：一行显示两个卡片
 @media (max-width: 959px)
   .home-wrapper .feature
-    flex: 0 0 45% !important        // 平板上一行两个
+    flex: 0 0 45% !important
     max-width: 45% !important
 
+// 针对手机设备的适配：一行显示一个卡片
 @media (max-width: $MQMobile)
   .home-wrapper .feature
-    flex: 0 0 90% !important        // 手机上一行一个
+    flex: 0 0 90% !important
     max-width: 90% !important
 
+
 // ============================================================
-// 2. Gitalk 评论区样式重置
+// 2. Gitalk 评论区插件样式重置
+// 作用：美化评论框外观，使其颜色与主题主色调（$accentColor）保持一致
 // ============================================================
 .gt-container
   .gt-ico-tip
     &::after
-      content: '。( Win + . ) 或 ( ⌃ + ⌘ + ␣ ) 打开表情'
+      content: '。( Win + . ) 或 ( ⌃ + ⌘ + ␣ ) 打开表情' // 提示用户如何输入 Emoji
       color: #999
       font-size: .8rem
   .gt-meta
@@ -65,14 +69,16 @@
     .gt-comment-body
       color var(--textColor)!important
 
+
 // ============================================================
-// 3. 社交图标 - QQ徽章样式
+// 3. 社交图标 - QQ 徽章样式
+// 作用：在侧边栏或页脚的 QQ 图标右上角增加一个“可撩”的小标签
 // ============================================================
 .qq
   position: relative;
 .qq::after
-  content: "可撩";           // 在QQ图标旁显示的文字
-  background: $accentColor;  // 使用主题主色调
+  content: "可撩";           // 标签显示的文字
+  background: $accentColor;  // 使用主题配置的主色调
   color:#fff;
   padding: 0 5px;
   border-radius: 10px;
@@ -82,8 +88,10 @@
   right: -35px;
   transform:scale(0.85);
 
+
 // ============================================================
-// 4. 代码演示模块 (Demo Block) 图标颜色
+// 4. 代码演示模块 (Demo Block) 插件样式
+// 作用：美化代码预览组件的边框和展开图标颜色
 // ============================================================
 body .vuepress-plugin-demo-block__wrapper
   &,.vuepress-plugin-demo-block__display
@@ -95,17 +103,37 @@ body .vuepress-plugin-demo-block__wrapper
     svg
       fill: $accentColor !important;
 
+
 // ============================================================
 // 5. 全文搜索框 (Search Suggestions) 样式优化
+// 作用：优化搜索下拉列表的高度，防止手机端显示不全
 // ============================================================
 .suggestions
   overflow: auto
-  max-height: calc(100vh - 6rem) // 防止搜索结果超出屏幕高度
-  @media (max-width: 719px) {    // 针对移动端的搜索框宽度优化
+  max-height: calc(100vh - 6rem) // 限制最大高度为屏幕高度减去顶部导航高度
+  @media (max-width: 719px) {    // 针对移动端优化搜索框宽度
     width: 90vw;
     min-width: 90vw!important;
     margin-right: -20px;
   }
   .highlight
-    color: $accentColor          // 搜索关键词高亮颜色
+    color: $accentColor          // 搜索匹配到的关键词高亮色
     font-weight: bold
+
+
+// ============================================================
+// 6. 终极方案：彻底封杀标题前的随机几何图形
+// ============================================================
+// 无论是在内容区还是页面标题区，强制不显示所有标题前的装饰
+h1::before, 
+h2::before, 
+h3::before,
+.theme-vdoing-content h1::before,
+.theme-vdoing-content h2::before,
+.page-title h1::before
+  display none !important
+  content none !important
+  background none !important
+  width 0 !important
+  height 0 !important
+  margin 0 !important

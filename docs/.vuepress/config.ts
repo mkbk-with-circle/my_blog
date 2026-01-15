@@ -36,7 +36,8 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
           { text: '归档', link: '/archives/' },
         ],
       },
-      { text: '关于', link: '/about/about.md' },
+      { text: '关于', link: '/about/' },
+
     ],
     sidebarDepth: 2, 
     logo: '/img/logo.png', 
