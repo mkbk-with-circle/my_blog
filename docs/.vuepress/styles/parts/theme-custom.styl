@@ -1,0 +1,52 @@
+// 1. 固定背景图
+#dynamic-background
+  position fixed
+  top 0; left 0; width 100%; height 100%
+  z-index -999 !important
+  background-image url('/img/bg/1.jpg')
+  background-size cover
+  background-position center
+  opacity 0.5
+
+// 2. 全局透明化处理
+.home-wrapper .banner, .home-wrapper .features, .home-wrapper .feature,
+.footer, .theme-vdoing-content, .card-box, .custom-block,
+.main-wrapper, .theme-vdoing-wrapper
+  background transparent !important
+  border none !important
+  box-shadow none !important
+
+// 3. 全局文字白色化
+body, #app, .theme-container
+  color #ffffff !important
+
+// 大标题加阴影
+.navbar .site-name, .navbar .links,
+.sidebar-links .sidebar-link,
+.post-list .post .title a,
+.blogger-wrapper .blogger-name,
+.blogger-wrapper .slogan,
+.categories-wrapper .title,
+.tags-wrapper .title
+  color #ffffff !important
+  text-shadow 1px 1px 3px rgba(0, 0, 0, 0.5) !important
+
+// 标签与分类（去阴影，保清晰）
+.tags-wrapper a, .tag-item, .tags span, .categories-wrapper a,
+.post-list .post .post-info a, .post-list .post .post-info span
+  color #ffffff !important
+  text-shadow none !important
+  font-weight 600 !important
+  opacity 1 !important
+
+// 细节修正
+h1::before, h2::before, h3::before, .page-title h1::before
+  display none !important
+
+.blogger-wrapper .slogan
+  white-space pre-wrap
+  line-height 1.5
+
+.search-box input
+  color #333 !important
+  text-shadow none !important

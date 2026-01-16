@@ -1,64 +1,45 @@
-//***vdoing主题-样式变量（你可以修改这些变量值以覆盖主题使用的样式变量）***//
+// ============================================================
+// Vdoing 主题调色板 (palette.styl)
+// 说明：取消注释（去掉 //）即可生效。修改后通常需要重启项目。
+// ============================================================
 
-// 以下注释的变量仅供参考，主题使用的最新变量请查看：https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/theme-vdoing/styles/palette.styl
+// --- 1. 全局颜色变量 ---
+// $accentColor = #11A8CD          // 主题色：控制链接、按钮、进度条、搜索框高亮等
+// $bannerTextColor = #ffffff         // 首页大标题文字颜色
+// $activeColor = #ff5722          // 激活状态的颜色（如菜单选中）
 
-// // 颜色
 
-// $bannerTextColor = #fff // 首页banner区(博客标题)文本颜色
-// $accentColor = #11A8CD // 主题色
-// $activeColor = #ff5722
-// $arrowBgColor = #ccc
+// --- 2. 布局尺寸 ---
+// $navbarHeight = 3.6rem          // 顶部导航栏高度
+// $sidebarWidth = 18rem           // 左侧侧边栏宽度
+// $contentWidth = 860px           // 文章内容区域的最大宽度
+// $homePageWidth = 1100px         // 首页内容区域的最大宽度
+// $rightMenuWidth = 230px         // 文章右侧目录栏宽度
 
-// // 布局
-// $navbarHeight = 3.6rem
-// $sidebarWidth = 18rem
-// $contentWidth = 860px
-// $homePageWidth = 1100px
-// $rightMenuWidth = 230px // 右侧菜单
 
-// // 代码块
-// $lineNumbersWrapperWidth = 2.5rem
-
-// // 浅色模式
+// --- 3. 浅色模式 (Light Mode) ---
 // .theme-mode-light
-//   --bodyBg: #f4f4f4
-//   --mainBg: rgba(255,255,255,1)
-//   --sidebarBg: rgba(255,255,255,.8)
-//   --blurBg: rgba(255,255,255,.9)
-//   --textColor: #004050
-//   --textLightenColor: #0085AD
-//   --borderColor: rgba(0,0,0,.15)
-//   // 代码块浅色主题
-//   --codeBg: #f6f6f6
-//   --codeColor: #525252
-//   codeThemeLight()
-//   // // 代码块深色主题
-//   // --codeBg: #252526
-//   // --codeColor: #fff
-//   // codeThemeDark()
+//   --bodyBg: #f4f4f4             // 网页最底层背景色
+//   --mainBg: rgba(255,255,255,1) // 内容区块背景色
+//   --sidebarBg: rgba(255,255,255,.8) // 侧边栏背景色
+//   --textColor: #004050          // 正文文字颜色
+//   --borderColor: rgba(0,0,0,.15) // 边框线颜色
+//   --codeBg: #f6f6f6             // 代码块背景色
+//   codeThemeLight()              // 使用浅色代码主题
 
-// // 深色模式
+
+// --- 4. 深色模式 (Dark Mode) ---
 // .theme-mode-dark
-//   --bodyBg: rgb(39,39,43)
-//   --mainBg: rgba(30,30,34,1)
-//   --sidebarBg: rgba(30,30,34,.8)
-//   --blurBg: rgba(30,30,34,.8)
-//   --textColor: rgb(140,140,150)
-//   --textLightenColor: #0085AD
-//   --borderColor: #2C2C3A
-//   --codeBg: #252526
-//   --codeColor: #fff
-//   codeThemeDark()
+//   --bodyBg: rgb(39,39,43)       // 深色下的底层背景
+//   --mainBg: rgba(30,30,34,1)    // 深色下的内容区块背景
+//   --sidebarBg: rgba(30,30,34,.8) // 深色下的侧边栏背景
+//   --textColor: rgb(140,140,150) // 深色下的文字颜色
+//   --codeBg: #252526             // 深色下的代码块背景
+//   codeThemeDark()               // 使用深色代码主题
 
-// // 阅读模式
+
+// --- 5. 阅读模式 (Read Mode) ---
 // .theme-mode-read
-//   --bodyBg: rgb(240,240,208)
-//   --mainBg: rgba(245,245,213,1)
-//   --sidebarBg: rgba(245,245,213,.8)
-//   --blurBg: rgba(245,245,213,.9)
-//   --textColor: #004050
-//   --textLightenColor: #0085AD
-//   --borderColor: rgba(0,0,0,.15)
-//   --codeBg: #282c34
-//   --codeColor: #fff
-//   codeThemeDark()
+//   --bodyBg: rgb(240,240,208)    // 护眼模式下的底层背景（米黄色/羊皮纸色）
+//   --mainBg: rgba(245,245,213,1) // 护眼模式下的内容背景
+//   --textColor: #004050          // 护眼模式下的文字颜色
