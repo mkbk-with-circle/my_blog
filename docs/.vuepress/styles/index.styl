@@ -1,33 +1,29 @@
 // ============================================================
-// 1. 首页特性卡片 (Features) 布局优化
-// 作用：让首页的三个/多个卡片无论多少都能水平居中，并增加悬停浮起动画
+// 1. 首页特性卡片 (Features) 布局与动画
 // ============================================================
 .home-wrapper .features
-  display: flex !important          // 强制启用弹性布局
-  flex-wrap: wrap !important        // 允许卡片自动换行
-  justify-content: center !important // 核心：内容永远水平居中对齐
+  display: flex !important
+  flex-wrap: wrap !important
+  justify-content: center !important
   margin: 0 auto !important
   padding: 2rem 0 !important
-  border-top: none !important       // 去掉卡片上方的分割线
+  border-top: none !important
 
 .home-wrapper .feature
-  flex: 0 0 28% !important          // 固定宽度占比（约一行三个）
-  max-width: 28% !important         // 限制最大宽度
-  text-align: center !important     // 文字内容居中
-  margin: 1rem 1% !important        // 卡片之间的左右间距
-  float: none !important            // 禁用旧版的浮动布局
-  transition: all .3s               // 增加 0.3 秒的平滑过渡效果
+  flex: 0 0 28% !important
+  max-width: 28% !important
+  text-align: center !important
+  margin: 1rem 1% !important
+  transition: all .3s // 悬停动画过渡
   
   &:hover
-    transform: translateY(-5px)     // 鼠标悬停时，卡片向上浮动 5 像素
+    transform: translateY(-5px)
 
-// 针对平板设备的适配：一行显示两个卡片
 @media (max-width: 959px)
   .home-wrapper .feature
     flex: 0 0 45% !important
     max-width: 45% !important
 
-// 针对手机设备的适配：一行显示一个卡片
 @media (max-width: $MQMobile)
   .home-wrapper .feature
     flex: 0 0 90% !important
@@ -35,15 +31,13 @@
 
 
 // ============================================================
-// 2. Gitalk 评论区插件样式重置
-// 作用：美化评论框外观，使其颜色与主题主色调（$accentColor）保持一致
+// 2. Gitalk 评论区美化
 // ============================================================
 .gt-container
-  .gt-ico-tip
-    &::after
-      content: '。( Win + . ) 或 ( ⌃ + ⌘ + ␣ ) 打开表情' // 提示用户如何输入 Emoji
-      color: #999
-      font-size: .8rem
+  .gt-ico-tip::after
+    content: '。( Win + . ) 或 ( ⌃ + ⌘ + ␣ ) 打开表情'
+    color: #999
+    font-size: .8rem
   .gt-meta
     border-color var(--borderColor)!important
   .gt-comments-null
@@ -71,69 +65,163 @@
 
 
 // ============================================================
-// 3. 社交图标 - QQ 徽章样式
-// 作用：在侧边栏或页脚的 QQ 图标右上角增加一个“可撩”的小标签
+// 3. 社交图标 - QQ 徽章
 // ============================================================
 .qq
-  position: relative;
-.qq::after
-  content: "可撩";           // 标签显示的文字
-  background: $accentColor;  // 使用主题配置的主色调
-  color:#fff;
-  padding: 0 5px;
-  border-radius: 10px;
-  font-size:12px;
-  position: absolute;
-  top: -4px;
-  right: -35px;
-  transform:scale(0.85);
+  position: relative
+  &::after
+    content: "可撩"
+    background: $accentColor
+    color: #fff
+    padding: 0 5px
+    border-radius: 10px
+    font-size: 12px
+    position: absolute
+    top: -4px
+    right: -35px
+    transform: scale(0.85)
 
 
 // ============================================================
-// 4. 代码演示模块 (Demo Block) 插件样式
-// 作用：美化代码预览组件的边框和展开图标颜色
+// 4. 代码演示 (Demo Block) 插件美化
 // ============================================================
 body .vuepress-plugin-demo-block__wrapper
   &,.vuepress-plugin-demo-block__display
     border-color rgba(160,160,160,.3)
   .vuepress-plugin-demo-block__footer:hover
     .vuepress-plugin-demo-block__expand::before
-      border-top-color: $accentColor !important;
-      border-bottom-color: $accentColor !important;
+      border-top-color: $accentColor !important
+      border-bottom-color: $accentColor !important
     svg
-      fill: $accentColor !important;
+      fill: $accentColor !important
 
 
 // ============================================================
-// 5. 全文搜索框 (Search Suggestions) 样式优化
-// 作用：优化搜索下拉列表的高度，防止手机端显示不全
+// 5. 搜索框优化 (防止移动端溢出)
 // ============================================================
 .suggestions
   overflow: auto
-  max-height: calc(100vh - 6rem) // 限制最大高度为屏幕高度减去顶部导航高度
-  @media (max-width: 719px) {    // 针对移动端优化搜索框宽度
-    width: 90vw;
-    min-width: 90vw!important;
-    margin-right: -20px;
-  }
+  max-height: calc(100vh - 6rem)
+  @media (max-width: 719px)
+    width: 90vw
+    min-width: 90vw!important
+    margin-right: -20px
   .highlight
-    color: $accentColor          // 搜索匹配到的关键词高亮色
+    color: $accentColor
     font-weight: bold
 
 
 // ============================================================
-// 6. 终极方案：彻底封杀标题前的随机几何图形
+// 6. 细节修正：标题装饰线、感言换行
 // ============================================================
-// 无论是在内容区还是页面标题区，强制不显示所有标题前的装饰
-h1::before, 
-h2::before, 
-h3::before,
+h1::before, h2::before, h3::before,
 .theme-vdoing-content h1::before,
 .theme-vdoing-content h2::before,
 .page-title h1::before
   display none !important
-  content none !important
-  background none !important
-  width 0 !important
-  height 0 !important
-  margin 0 !important
+
+.blogger-wrapper .slogan
+  white-space pre-wrap
+  line-height 1.5
+  margin-top 10px
+
+
+// ============================================================
+// 7. 全局固定背景图片
+// ============================================================
+#dynamic-background
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: -999 !important
+  
+  // --- 核心修改：指定固定图片路径 ---
+  background-image: url('/img/bg/1.jpg') 
+  background-size: cover
+  background-position: center
+  background-repeat: no-repeat
+  
+  // 调整透明度：0.1 到 1.0 之间。1.0 为完全不透明
+  opacity: 0.5 
+
+
+
+// ============================================================
+// 8. 终极透明化：让背景图透出来
+// ============================================================
+// 移除所有顽固背景
+.home-wrapper .banner,
+.home-wrapper .features,
+.home-wrapper .feature,
+.footer,
+.theme-vdoing-content,
+.card-box,
+.custom-block,
+.main-wrapper,
+.theme-vdoing-wrapper
+  background: transparent !important
+  border: none !important
+  box-shadow: none !important
+  background-image: none !important // 杀掉网格线
+
+// 深色模式变量穿透
+.theme-mode-dark
+  --mainBg: transparent !important
+  --contentBg: transparent !important
+  --cardBg: transparent !important
+  --sidebarBg: rgba(30, 30, 30, 0.5) !important
+  --blurBg: transparent !important
+  --codeBg: rgba(0, 0, 0, 0.3) !important
+
+// 增强文字可读性（阴影）
+.home-wrapper .banner h1,
+.home-wrapper .banner .description,
+.home-wrapper .feature h2,
+.home-wrapper .feature p,
+.blogger-wrapper .slogan
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5)
+
+// ============================================================
+// 修正方案：全局文字白色 + 标签文字强力显示
+// ============================================================
+
+// 1. 全局基础文字颜色（强制白色）
+body, #app, .theme-container
+  color: #ffffff !important
+
+// 2. 导航栏、侧边栏、文章标题
+.navbar .site-name, .navbar .links,
+.sidebar-links .sidebar-link,
+.post-list .post .title a,
+.blogger-wrapper .blogger-name,
+.blogger-wrapper .slogan,
+.categories-wrapper .title,
+.tags-wrapper .title
+  color: #ffffff !important
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important
+
+// 3. 【核心修复】针对标签 (Tags) 和 分类 (Categories)
+// 确保彩色背景上的文字是纯白色且清晰的
+.tags-wrapper a, 
+.tag-item, 
+.tags span,
+.categories-wrapper a,
+.post-list .post .post-info a,
+.post-list .post .post-info span
+  color: #ffffff !important      // 强制文字为白色
+  text-shadow: none !important   // 必须去掉阴影，否则小字会糊
+  font-weight: 600 !important    // 加粗文字
+  display: inline-block
+  opacity: 1 !important          // 确保完全不透明
+
+// 4. 针对最近更新列表的文字
+.post-list .post .description,
+.post-list .post .post-info
+  color: rgba(255, 255, 255, 0.9) !important
+
+// 5. 搜索框文字颜色修复（防止搜索框里也是白的看不见字）
+.search-box input
+  color: #333333 !important      // 搜索框内部文字保持深色
+  text-shadow: none !important

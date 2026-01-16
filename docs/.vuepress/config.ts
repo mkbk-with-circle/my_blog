@@ -59,9 +59,9 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
 
     // 博主信息 (显示在首页侧边栏)
     blogger: {
-      avatar: 'https://cdn.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg', // 建议换成你自己的头像地址
+      avatar: '/img/girl.jpg', // 注意：这里直接写 /img/ 开头，不需要写 public
       name: '玛卡巴卡',
-      slogan: '技术并非主旋律，热爱生活的一切才是',
+      slogan: '短暂的休息，是为了更好的再出发\n有我爱和爱我的人，便什么都不会怕——',
     },
 
     // 社交图标
@@ -186,3 +186,5 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
     '.vuepress/config.ts',
   ]
 })
+
+
