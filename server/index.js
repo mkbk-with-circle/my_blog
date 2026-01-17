@@ -110,6 +110,47 @@ app.post('/api/admin/answer', (req, res) => {
   }
 });
 
+// 删除提问接口
+app.post('/api/admin/delete', (req, res) => {
+    const { id, token } = req.body;
+
+    // 1. 验证 Token (请确保这里的 ADMIN_TOKEN 与你现有的变量名一致)
+    if (token !== ADMIN_TOKEN) {
+        return res.status(403).json({ message: '权限不足' });
+    }
+
+    // 2. 读取数据
+    let questions = readData();
+    const index = questions.findIndex(q => q.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ message: '提问不存在' });
+    }
+
+    // 3. 如果有图片，尝试从磁盘删除图片文件
+    const question = questions[index];
+    if (question.image_url) {
+        const fs = require('fs');
+        const path = require('path');
+        const imagePath = path.join(__dirname, question.image_url); // 这里的路径逻辑需与你上传时一致
+        if (fs.existsSync(imagePath)) {
+            try {
+                fs.unlinkSync(imagePath);
+                console.log('已删除关联图片:', imagePath);
+            } catch (err) {
+                console.error('删除图片失败:', err);
+            }
+        }
+    }
+
+    // 4. 从数组中移除并保存
+    questions.splice(index, 1);
+    writeData(questions);
+
+    res.json({ success: true, message: '删除成功' });
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

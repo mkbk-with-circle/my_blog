@@ -71,8 +71,18 @@
 
     <!-- List -->
     <div class="space-y-6" v-if="filteredQuestions.length">
-      <div v-for="item in filteredQuestions" :key="item.id" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-        <div class="flex justify-between items-start mb-3">
+      <div v-for="item in filteredQuestions" :key="item.id" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative group">
+        
+        <!-- 删除按钮 (右上角) -->
+        <button 
+          @click="deleteQuestion(item.id)"
+          class="absolute top-4 right-4 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+          title="删除此提问"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+        </button>
+
+        <div class="flex justify-between items-start mb-3 pr-8">
           <div class="text-xs text-slate-400">
             <span class="font-mono">ID: {{ item.id.substring(0,8) }}</span>
             <span class="mx-2">·</span>
@@ -200,11 +210,39 @@
             if (!res.ok) throw new Error('提交失败')
 
             alert('操作成功！')
-            // 提交后自动刷新列表并停留在当前 Tab（或者切到已回复）
             await fetchQuestions()
             if (item.status !== 'ANSWERED') {
               activeTab.value = 'ANSWERED'
             }
+          } catch (e) {
+            alert(e.message)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        // 新增：删除功能
+        const deleteQuestion = async (id) => {
+          if (!confirm('确定要彻底删除这条提问吗？此操作不可撤销。')) return
+          
+          loading.value = true
+          try {
+            const res = await fetch('/api/admin/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: id,
+                token: token.value
+              })
+            })
+            
+            if (!res.ok) {
+              const errData = await res.json()
+              throw new Error(errData.message || '删除失败')
+            }
+
+            alert('删除成功')
+            await fetchQuestions() // 重新加载列表
           } catch (e) {
             alert(e.message)
           } finally {
@@ -224,7 +262,8 @@
           filteredQuestions,
           fetchQuestions,
           submitAnswer,
-          clearToken
+          clearToken,
+          deleteQuestion
         }
       }
     }).mount('#app')
