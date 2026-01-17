@@ -1,19 +1,25 @@
 <template>
   <div v-if="item" class="detail-container">
+    <!-- 提问部分 -->
     <div class="q-section">
-      <h3 class="q-title">提问：{{ item.title }}</h3>
+      <div class="label-tag q-tag">提问</div>
+      <h3 class="q-title">{{ item.title }}</h3>
       <p class="content">{{ item.content }}</p>
-      <!-- 修改点 1: 图片地址去掉 localhost，改为相对路径 /api -->
       <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
     </div>
+
+    <!-- 回复部分 -->
     <div class="a-section">
-      <div class="a-label">马卡巴卡的回复：</div>
+      <div class="label-tag a-tag">玛卡巴卡的回复</div>
       <p class="answer">{{ item.answer }}</p>
-      <div class="date">{{ formatFullDate(item.answered_at) }}</div>
+      <div class="footer-info">
+        <span class="date">{{ formatFullDate(item.answered_at) }}</span>
+        <a href="javascript:history.back()" class="back-btn">← 返回列表</a>
+      </div>
     </div>
   </div>
-  <div v-else-if="error" class="error-msg">{{ error }}</div>
-  <div v-else class="loading-msg">加载中...</div>
+  <div v-else-if="error" class="status-msg error">{{ error }}</div>
+  <div v-else class="status-msg">加载中...</div>
 </template>
 
 <script>
@@ -30,7 +36,6 @@ export default {
     }
 
     var self = this;
-    // 修改点 2: 接口地址去掉 http://localhost:8787
     fetch('/api/questions/detail/' + id)
       .then(function(res) {
         if (res.ok) return res.json();
@@ -52,13 +57,94 @@ export default {
 </script>
 
 <style scoped>
-.detail-container { border: 1px solid #eaecef; border-radius: 8px; overflow: hidden; margin-top: 20px; color: #2c3e50; }
-.q-section { padding: 20px; background: #f9f9f9; }
-.q-title { margin-top: 0; color: #34495e; }
-.a-section { padding: 20px; border-top: 2px solid #3eaf7c; background: #fff; }
-.a-label { font-weight: bold; color: #3eaf7c; margin-bottom: 10px; }
-.q-img { max-width: 100%; border-radius: 4px; margin-top: 10px; border: 1px solid #eee; }
-.content, .answer { line-height: 1.6; white-space: pre-wrap; margin: 0; }
-.date { font-size: 0.8em; color: #999; margin-top: 15px; text-align: right; }
-.error-msg, .loading-msg { padding: 20px; text-align: center; color: #999; }
+.detail-container {
+  width: 100%;
+  margin-top: 20px;
+  /* 统一毛玻璃风格 */
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  color: #fff;
+}
+
+.q-section {
+  padding: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.a-section {
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.label-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.q-tag { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.a-tag { background: #3eaf7c; color: #fff; }
+
+.q-title {
+  margin: 0 0 15px 0;
+  font-size: 1.5em;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.content, .answer {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 0;
+  font-size: 1.1em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.q-img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.footer-info {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.back-btn {
+  color: #3eaf7c;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.back-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.status-msg {
+  padding: 40px;
+  text-align: center;
+  color: #fff;
+  background: rgba(30,30,30,0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+.status-msg.error { color: #ff6b6b; }
 </style>
