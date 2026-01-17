@@ -43,3 +43,18 @@
 //   --bodyBg: rgb(240,240,208)    // 护眼模式下的底层背景（米黄色/羊皮纸色）
 //   --mainBg: rgba(245,245,213,1) // 护眼模式下的内容背景
 //   --textColor: #004050          // 护眼模式下的文字颜色
+
+
+// --- 强制全局文字白色配置 ---
+:root
+  --textColor: #ffffff          // 主文字
+  --titleColor: #ffffff         // 标题颜色
+  --textLightenColor: #ffffff   // 高亮文字
+  --subTextColor: #eeeeee       // 次要文字（日期等）
+  --borderColor: rgba(255,255,255,0.15) // 边框线调淡
+
+// 如果你开启了深色/浅色模式切换，确保在任何模式下都强制为白色
+.theme-mode-light, .theme-mode-dark, .theme-mode-read
+  --textColor: #ffffff !important
+  --titleColor: #ffffff !important
+  --subTextColor: #eeeeee !important
