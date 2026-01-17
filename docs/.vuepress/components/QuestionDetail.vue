@@ -1,23 +1,28 @@
 <template>
-  <div v-if="item" class="detail-container">
-    <div class="q-section">
-      <div class="label-tag q-tag">提问</div>
-      <h3 class="q-title">{{ item.title }}</h3>
-      <p class="content">{{ item.content }}</p>
-      <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
-    </div>
+  <div class="detail-wrap" v-bind:key="routeKey">
+    <div v-if="loading" class="status-msg">加载中...</div>
+    <div v-else-if="error" class="status-msg error">{{ error }}</div>
 
-    <div class="a-section">
-      <div class="label-tag a-tag">马卡巴卡的回复</div>
-      <p class="answer">{{ item.answer }}</p>
-      <div class="footer-info">
-        <span class="date">{{ formatFullDate(item.answered_at) }}</span>
-        <a v-on:click="$router.back()" style="cursor:pointer" class="back-btn">← 返回列表</a>
+    <div v-else-if="item" class="detail-container">
+      <div class="q-section">
+        <div class="label-tag q-tag">提问</div>
+        <h3 class="q-title">{{ item.title }}</h3>
+        <p class="content">{{ item.content }}</p>
+        <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
+      </div>
+
+      <div class="a-section">
+        <div class="label-tag a-tag">玛卡巴卡的回复</div>
+        <p class="answer">{{ item.answer }}</p>
+        <div class="footer-info">
+          <span class="date">{{ formatFullDate(item.answered_at) }}</span>
+          <a v-on:click="$router && $router.back ? $router.back() : history.back()" class="back-btn">← 返回</a>
+        </div>
       </div>
     </div>
+
+    <div v-else class="status-msg error">未加载到数据</div>
   </div>
-  <div v-else-if="error" class="status-msg error">{{ error }}</div>
-  <div v-else class="status-msg">加载中...</div>
 </template>
 
 <script>
@@ -26,35 +31,34 @@ export default {
     return {
       item: null,
       error: '',
-      loading: false
+      loading: true
     }
   },
 
-  // 第一次进入路由时触发（客户端跳转也能保证拿到 query）
-  beforeRouteEnter: function(to, from, next) {
-    next(function(vm) {
-      vm.loadByRoute(to)
-    })
+  computed: {
+    // 用 fullPath 做 key，路由（含 query）变化就强制刷新整块 DOM
+    routeKey: function() {
+      return (this.$route && this.$route.fullPath) ? this.$route.fullPath : String(Date.now())
+    }
   },
 
-  // 在同一个组件实例内，路由参数变化时触发（不依赖 mounted）
-  beforeRouteUpdate: function(to, from, next) {
-    this.loadByRoute(to)
-    next()
-  },
-
-  // 兜底：有些情况下 mounted 比路由就绪早，mounted 再跑一次
-  mounted: function() {
-    this.loadByRoute(this.$route)
+  watch: {
+    // 关键：监听 fullPath（包含 query），保证点击不同详情一定触发
+    '$route.fullPath': {
+      immediate: true,
+      handler: function() {
+        this.load()
+      }
+    }
   },
 
   methods: {
-    getIdFromRoute: function(route) {
-      // Vue Router query
-      var id = route && route.query ? route.query.id : null
+    getId: function() {
+      // 优先 Vue Router 的 query
+      var id = this.$route && this.$route.query ? this.$route.query.id : null
       if (id) return id
 
-      // 兜底：从 location.search 再取一次，防止 VuePress 某些 hydration 时序问题
+      // 兜底：直接从 URL 取
       try {
         return new URLSearchParams(window.location.search).get('id')
       } catch (e) {
@@ -62,26 +66,23 @@ export default {
       }
     },
 
-    loadByRoute: function(route) {
-      var id = this.getIdFromRoute(route)
+    load: function() {
+      var id = this.getId()
+      this.item = null
+      this.error = ''
+      this.loading = true
+
       if (!id) {
-        this.item = null
         this.error = '缺少参数 id'
+        this.loading = false
         return
       }
-      this.fetchData(id)
-    },
 
-    fetchData: function(id) {
       var self = this
-      self.loading = true
-      self.error = ''
-      self.item = null
-
-      fetch('/api/questions/detail/' + id)
+      fetch('/api/questions/detail/' + id, { cache: 'no-store' })
         .then(function(res) {
-          if (res.ok) return res.json()
-          throw new Error('提问不存在或尚未回复')
+          if (!res.ok) throw new Error('接口返回 ' + res.status)
+          return res.json()
         })
         .then(function(data) {
           self.item = data
@@ -92,16 +93,19 @@ export default {
         .finally(function() {
           self.loading = false
         })
+    },
+
+    formatFullDate: function(dateStr) {
+      return new Date(dateStr).toLocaleString()
     }
   }
 }
 </script>
 
 <style scoped>
-/* 样式保持不变 ... */
+.detail-wrap { width: 100%; margin-top: 20px; }
 .detail-container {
   width: 100%;
-  margin-top: 20px;
   background: rgba(30, 30, 30, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -120,6 +124,15 @@ export default {
 .q-img { max-width: 100%; border-radius: 8px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
 .footer-info { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; }
 .date { font-size: 0.85em; color: rgba(255, 255, 255, 0.5); }
-.back-btn { color: #3eaf7c; text-decoration: none; font-weight: 500; }
-.status-msg { padding: 40px; text-align: center; color: #fff; }
+.back-btn { color: #3eaf7c; text-decoration: none; font-weight: 500; cursor: pointer; }
+.status-msg {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.status-msg.error { color: #ff6b6b; }
 </style>
