@@ -51,14 +51,14 @@ export default {
       }
       this.loading = true;
       this.message = '';
-      
+
       var fd = new FormData();
       fd.append('title', this.title);
       fd.append('content', this.content);
       if (this.file) fd.append('image', this.file);
 
       var self = this;
-      fetch('http://localhost:8787/api/questions', {
+      fetch('/api/questions', {
         method: 'POST',
         body: fd
       })
@@ -71,10 +71,13 @@ export default {
           self.file = null;
           self.previewUrl = '';
         } else {
-          throw new Error();
+          return res.text().then(function(t) {
+            throw new Error('HTTP ' + res.status + ': ' + t);
+          });
         }
       })
       .catch(function(e) {
+        console.error(e);
         self.isError = true;
         self.message = '提交失败，请稍后再试';
       })
