@@ -15,6 +15,13 @@
     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
+          <!-- 返回首页链接 -->
+          <div class="flex items-center gap-2 mb-1">
+            <a href="/" class="group flex items-center gap-1 text-slate-400 hover:text-blue-600 transition-colors text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>返回首页</span>
+            </a>
+          </div>
           <h1 class="text-2xl font-bold text-slate-800">提问箱管理</h1>
           <p class="text-slate-500 text-sm">每次打开都需要输入管理密码</p>
         </div>
@@ -23,8 +30,9 @@
           <input
             type="password"
             v-model="token"
+            @keyup.enter="fetchQuestions"
             placeholder="输入管理密码"
-            class="border border-slate-200 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm w-64"
+            class="border border-slate-200 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm w-48 md:w-64"
           />
           <button
             @click="fetchQuestions"
@@ -34,7 +42,6 @@
           <button
             @click="clearToken"
             class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition"
-            title="清空本次输入的密码"
           >清空</button>
         </div>
       </div>
@@ -85,18 +92,19 @@
           <p class="text-slate-700 whitespace-pre-wrap leading-relaxed">{{ item.content }}</p>
         </div>
 
+        <!-- 图片展示 -->
         <div v-if="item.image_url" class="mb-4">
           <img
             :src="'/api' + item.image_url"
-            class="max-h-64 rounded-lg border border-slate-200 cursor-zoom-in"
+            class="max-h-80 rounded-lg border border-slate-200 cursor-zoom-in hover:opacity-90 transition"
             @click="window.open('/api' + item.image_url)"
+            title="点击查看原图"
           >
         </div>
 
         <div class="border-t border-slate-100 pt-4">
           <div class="flex items-center justify-between mb-2">
             <label class="text-sm font-semibold text-slate-700">回复内容</label>
-            <span class="text-xs text-slate-400" v-if="item.answer && item.status==='ANSWERED'">（已保存，可修改）</span>
           </div>
 
           <textarea
@@ -110,7 +118,7 @@
             <button
               @click="submitAnswer(item)"
               :disabled="loading || !token || !item.newAnswer.trim()"
-              class="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-black disabled:opacity-50 transition font-medium"
+              class="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-black disabled:opacity-50 transition font-medium shadow-sm"
             >
               {{ item.status === 'ANSWERED' ? '更新回复' : '确认发布' }}
             </button>
@@ -132,9 +140,9 @@
     createApp({
       setup() {
         const questions = ref([])
-        const token = ref('') // 不再持久化：每次打开都要输入
+        const token = ref('')
         const loading = ref(false)
-        const activeTab = ref('PENDING') // PENDING | ANSWERED
+        const activeTab = ref('PENDING')
         const lastRefreshedAt = ref(null)
 
         const pendingCount = computed(() =>
@@ -155,7 +163,6 @@
           token.value = ''
           questions.value = []
           lastRefreshedAt.value = null
-          activeTab.value = 'PENDING'
         }
 
         const fetchQuestions = async () => {
@@ -171,7 +178,7 @@
             }))
             lastRefreshedAt.value = Date.now()
           } catch (e) {
-            alert(e.message || '获取失败')
+            alert(e.message)
           } finally {
             loading.value = false
           }
@@ -179,8 +186,6 @@
 
         const submitAnswer = async (item) => {
           if (!token.value) return alert('请输入密码')
-          if (!item.newAnswer || !item.newAnswer.trim()) return alert('回复内容不能为空')
-
           loading.value = true
           try {
             const res = await fetch('/api/admin/answer', {
@@ -194,18 +199,14 @@
             })
             if (!res.ok) throw new Error('提交失败')
 
-            // 1) 立刻在前端把它标记为已回复 -> 会自动从“待回复”消失
-            item.status = 'ANSWERED'
-            item.answer = item.newAnswer
-
-            // 2) 切到已回复（你也可以注释掉这行，保持在待回复）
-            activeTab.value = 'ANSWERED'
-
-            // 3) 再从服务端刷新一次，确保列表完全一致
+            alert('操作成功！')
+            // 提交后自动刷新列表并停留在当前 Tab（或者切到已回复）
             await fetchQuestions()
-
+            if (item.status !== 'ANSWERED') {
+              activeTab.value = 'ANSWERED'
+            }
           } catch (e) {
-            alert(e.message || '提交失败')
+            alert(e.message)
           } finally {
             loading.value = false
           }
