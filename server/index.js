@@ -111,15 +111,13 @@ app.post('/api/admin/answer', (req, res) => {
 });
 
 // 删除提问接口
+// 删除接口
 app.post('/api/admin/delete', (req, res) => {
     const { id, token } = req.body;
-
-    // 1. 验证 Token (请确保这里的 ADMIN_TOKEN 与你现有的变量名一致)
     if (token !== ADMIN_TOKEN) {
         return res.status(403).json({ message: '权限不足' });
     }
 
-    // 2. 读取数据
     let questions = readData();
     const index = questions.findIndex(q => q.id === id);
 
@@ -127,28 +125,21 @@ app.post('/api/admin/delete', (req, res) => {
         return res.status(404).json({ message: '提问不存在' });
     }
 
-    // 3. 如果有图片，尝试从磁盘删除图片文件
+    // 删除关联图片
     const question = questions[index];
     if (question.image_url) {
-        const fs = require('fs');
-        const path = require('path');
-        const imagePath = path.join(__dirname, question.image_url); // 这里的路径逻辑需与你上传时一致
+        // 这里的路径要根据你的实际存放位置调整，通常是 public 目录下
+        const imagePath = path.join(__dirname, 'public', question.image_url.replace('/uploads/', 'uploads/'));
         if (fs.existsSync(imagePath)) {
-            try {
-                fs.unlinkSync(imagePath);
-                console.log('已删除关联图片:', imagePath);
-            } catch (err) {
-                console.error('删除图片失败:', err);
-            }
+            fs.unlinkSync(imagePath);
         }
     }
 
-    // 4. 从数组中移除并保存
     questions.splice(index, 1);
     writeData(questions);
-
-    res.json({ success: true, message: '删除成功' });
+    res.json({ success: true });
 });
+
 
 
 app.listen(PORT, () => {
