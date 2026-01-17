@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 提问箱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>[v-cloak] { display: none; }</style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8">
+    <div id="app" v-cloak class="max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm gap-4 border border-slate-100">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">提问箱管理</h1>
+            </div>
+            <div class="flex gap-2">
+                <input type="password" v-model="token" placeholder="输入管理密码" 
+                       class="border border-slate-200 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+                <button @click="fetchQuestions" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">刷新列表</button>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div v-for="item in questions" :key="item.id" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-xs text-slate-400">{{ new Date(item.created_at).toLocaleString() }}</span>
+                    <span :class="item.status === 'ANSWERED' ? 'text-green-600 bg-green-50' : 'text-amber-600 bg-amber-50'" class="px-3 py-1 rounded-full text-xs font-medium">
+                        {{item.status === 'ANSWERED' ? '已回复' : '待处理'}}
+                    </span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">{{item.title}}</h3>
+                <p class="text-slate-700 bg-slate-50 p-4 rounded-lg mb-4 whitespace-pre-wrap">{{item.content}}</p>
+                
+                <div v-if="item.image_url" class="mb-4">
+                    <img :src="'/api'+item.image_url" class="max-h-64 rounded border" @click="window.open('/api'+item.image_url)">
+                </div>
+
+                <div class="border-t pt-4">
+                    <textarea v-model="item.newAnswer" rows="3" class="w-full border p-3 rounded-lg bg-slate-50 focus:bg-white outline-none" placeholder="输入回复..."></textarea>
+                    <div class="flex justify-end mt-2">
+                        <button @click="submitAnswer(item)" :disabled="loading" class="bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-black">
+                            确认发布
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue
+        createApp({
+            setup() {
+                const questions = ref([]);
+                const token = ref(localStorage.getItem('admin_token') || '');
+                const loading = ref(false);
+
+                const fetchQuestions = async () => {
+                    if (!token.value) return alert('请输入密码');
+                    loading.value = true;
+                    localStorage.setItem('admin_token', token.value);
+                    try {
+                        const res = await fetch(`/api/admin/questions?token=${encodeURIComponent(token.value)}`);
+                        if (!res.ok) throw new Error('密码错误');
+                        const data = await res.json();
+                        questions.value = data.map(q => ({...q, newAnswer: q.answer || ''}));
+                    } catch (e) { alert(e.message); }
+                    finally { loading.value = false; }
+                };
+
+                const submitAnswer = async (item) => {
+                    loading.value = true;
+                    try {
+                        const res = await fetch('/api/admin/answer', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: item.id, answer: item.newAnswer, token: token.value })
+                        });
+                        if (!res.ok) throw new Error('提交失败');
+                        alert('回复成功！');
+                        item.status = 'ANSWERED';
+                    } catch (e) { alert(e.message); }
+                    finally { loading.value = false; }
+                };
+
+                onMounted(() => { if(token.value) fetchQuestions(); });
+                return { questions, token, loading, fetchQuestions, submitAnswer }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
