@@ -23,41 +23,75 @@
 <script>
 export default {
   data: function() {
-    return { item: null, error: '' }
-  },
-  // 使用 watch 监听路由变化，防止点击不同提问时不刷新
-  watch: {
-    '$route.query.id': function(newId) {
-      if (newId) this.fetchData(newId);
+    return {
+      item: null,
+      error: '',
+      loading: false
     }
   },
+
+  // 第一次进入路由时触发（客户端跳转也能保证拿到 query）
+  beforeRouteEnter: function(to, from, next) {
+    next(function(vm) {
+      vm.loadByRoute(to)
+    })
+  },
+
+  // 在同一个组件实例内，路由参数变化时触发（不依赖 mounted）
+  beforeRouteUpdate: function(to, from, next) {
+    this.loadByRoute(to)
+    next()
+  },
+
+  // 兜底：有些情况下 mounted 比路由就绪早，mounted 再跑一次
   mounted: function() {
-    // 从 Vue 路由对象直接取 id
-    var id = this.$route.query.id;
-    if (id) {
-      this.fetchData(id);
-    } else {
-      this.error = '缺少参数';
-    }
+    this.loadByRoute(this.$route)
   },
+
   methods: {
+    getIdFromRoute: function(route) {
+      // Vue Router query
+      var id = route && route.query ? route.query.id : null
+      if (id) return id
+
+      // 兜底：从 location.search 再取一次，防止 VuePress 某些 hydration 时序问题
+      try {
+        return new URLSearchParams(window.location.search).get('id')
+      } catch (e) {
+        return null
+      }
+    },
+
+    loadByRoute: function(route) {
+      var id = this.getIdFromRoute(route)
+      if (!id) {
+        this.item = null
+        this.error = '缺少参数 id'
+        return
+      }
+      this.fetchData(id)
+    },
+
     fetchData: function(id) {
-      var self = this;
-      self.item = null; // 清空旧数据
+      var self = this
+      self.loading = true
+      self.error = ''
+      self.item = null
+
       fetch('/api/questions/detail/' + id)
         .then(function(res) {
-          if (res.ok) return res.json();
-          throw new Error('提问不存在或尚未回复');
+          if (res.ok) return res.json()
+          throw new Error('提问不存在或尚未回复')
         })
         .then(function(data) {
-          self.item = data;
+          self.item = data
         })
         .catch(function(err) {
-          self.error = err.message || '加载失败';
-        });
-    },
-    formatFullDate: function(dateStr) {
-      return new Date(dateStr).toLocaleString();
+          self.error = (err && err.message) ? err.message : '加载失败'
+        })
+        .finally(function() {
+          self.loading = false
+        })
     }
   }
 }
