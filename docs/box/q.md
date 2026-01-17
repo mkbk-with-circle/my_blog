@@ -11,4 +11,7 @@ author:
   name: 玛卡巴卡
 ---
 
-<QuestionDetail />
+<ClientOnly>
+  <QuestionDetail />
+</ClientOnly>
+

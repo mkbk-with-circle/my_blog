@@ -35,7 +35,10 @@ export default {
       return new Date(dateStr).toLocaleDateString();
     },
     goDetail: function(id) {
-      window.location.href = '/box/q.html?id=' + id;
+      // 跳转到 q.md 的 permalink：/pages/01a4c3/
+      // 用 $withBase 兼容 base 路径部署
+      var path = this.$withBase('/pages/01a4c3/')
+      this.$router.push({ path: path, query: { id: id } })
     }
   }
 }
@@ -62,11 +65,11 @@ export default {
   /* 关键修改：毛玻璃效果，让背景模糊，文字更清晰 */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  
+
   /* 细边框 */
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  
+
   display: flex;
   justify-content: space-between;
   align-items: center;
