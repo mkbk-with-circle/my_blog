@@ -111,33 +111,52 @@ app.post('/api/admin/answer', (req, res) => {
 });
 
 // 删除提问接口
-// 删除接口
+// 【管理端】删除提问接口 (适配 SQLite 版本)
 app.post('/api/admin/delete', (req, res) => {
+  try {
     const { id, token } = req.body;
+    
+    // 1. 权限校验
     if (token !== ADMIN_TOKEN) {
-        return res.status(403).json({ message: '权限不足' });
+      return res.status(403).json({ error: '权限不足' });
     }
 
-    let questions = readData();
-    const index = questions.findIndex(q => q.id === id);
+    // 2. 先查询该提问，为了获取图片路径
+    const question = db.prepare("SELECT image_url FROM questions WHERE id = ?").get(id);
 
-    if (index === -1) {
-        return res.status(404).json({ message: '提问不存在' });
+    if (!question) {
+      return res.status(404).json({ error: '提问不存在' });
     }
 
-    // 删除关联图片
-    const question = questions[index];
+    // 3. 如果有图片，删除磁盘上的文件
     if (question.image_url) {
-        // 这里的路径要根据你的实际存放位置调整，通常是 public 目录下
-        const imagePath = path.join(__dirname, 'public', question.image_url.replace('/uploads/', 'uploads/'));
-        if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
+      // 这里的逻辑：question.image_url 通常是 "/uploads/xxx.jpg"
+      // 我们需要拼接成服务器上的绝对路径
+      const filename = path.basename(question.image_url);
+      const filePath = path.join(uploadDir, filename);
+      
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (err) {
+          console.error('磁盘文件删除失败:', err);
         }
+      }
     }
 
-    questions.splice(index, 1);
-    writeData(questions);
-    res.json({ success: true });
+    // 4. 从数据库中删除记录
+    const stmt = db.prepare("DELETE FROM questions WHERE id = ?");
+    const result = stmt.run(id);
+
+    if (result.changes > 0) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ error: '数据库删除失败' });
+    }
+  } catch (error) {
+    console.error('删除接口崩溃:', error);
+    res.status(500).json({ error: '服务器内部错误' });
+  }
 });
 
 
