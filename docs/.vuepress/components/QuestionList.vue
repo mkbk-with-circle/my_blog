@@ -107,10 +107,16 @@ export default {
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* 允许换行显示完整标题 */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+
+  /* 避免超长连续字符撑破布局（比如很多“你好你好...”不带空格） */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
+
 
 .card-date {
   font-size: 0.85em;
