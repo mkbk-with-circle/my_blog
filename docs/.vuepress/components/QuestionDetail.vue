@@ -3,7 +3,8 @@
     <div class="q-section">
       <h3 class="q-title">提问：{{ item.title }}</h3>
       <p class="content">{{ item.content }}</p>
-      <img v-if="item.image_url" v-bind:src="'http://localhost:8787' + item.image_url" class="q-img" />
+      <!-- 修改点 1: 图片地址去掉 localhost，改为相对路径 /api -->
+      <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
     </div>
     <div class="a-section">
       <div class="a-label">马卡巴卡的回复：</div>
@@ -29,7 +30,8 @@ export default {
     }
 
     var self = this;
-    fetch('http://localhost:8787/api/questions/detail/' + id)
+    // 修改点 2: 接口地址去掉 http://localhost:8787
+    fetch('/api/questions/detail/' + id)
       .then(function(res) {
         if (res.ok) return res.json();
         throw new Error('提问不存在或尚未回复');

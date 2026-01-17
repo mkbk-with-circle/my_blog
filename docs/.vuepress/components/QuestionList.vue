@@ -18,12 +18,14 @@ export default {
   },
   mounted: function() {
     var self = this;
-    fetch('http://localhost:8787/api/questions/public')
+    // 去掉 http://localhost:8787，直接用 /api 开头
+    fetch('/api/questions/public')
       .then(function(res) { return res.json(); })
       .then(function(data) { self.list = data; })
       .catch(function(err) { console.error(err); })
       .finally(function() { self.loading = false; });
   },
+
   methods: {
     formatDate: function(dateStr) {
       return new Date(dateStr).toLocaleDateString();
