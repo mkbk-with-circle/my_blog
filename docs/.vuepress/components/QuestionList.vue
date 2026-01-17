@@ -4,16 +4,13 @@
     <div v-else-if="list.length === 0" class="status-msg">还没有已回复的提问哦~</div>
     <div v-else class="stack">
       <div v-for="item in list" v-bind:key="item.id" class="card" v-on:click="goDetail(item.id)">
-        <div class="card-header">
+        <div class="card-info">
           <div class="card-title">{{ item.title }}</div>
           <div class="card-date">{{ formatDate(item.answered_at) }}</div>
         </div>
-        <!-- 显示部分内容，使高度随内容变化 -->
-        <div class="card-body">
-          {{ item.content }}
-        </div>
-        <div class="card-footer">
-          查看详情 →
+        <div class="card-arrow">
+          <span>查看详情</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </div>
       </div>
     </div>
@@ -50,75 +47,77 @@ export default {
   margin-top: 20px;
 }
 
-/* 改为垂直堆叠布局，占据整栏宽度 */
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 16px;
 }
 
 .card {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
-  /* 背景完全透明 */
-  background: transparent;
-  /* 明显的边界线：使用半透明白色或浅灰色 */
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 18px 24px;
+  /* 关键修改：深色半透明底色 */
+  background: rgba(30, 30, 30, 0.6);
+  /* 关键修改：毛玻璃效果，让背景模糊，文字更清晰 */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  /* 细边框 */
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  /* 确保高度随内容撑开 */
-  height: auto;
-}
-
-/* 悬停效果：边框变亮，微弱的背景感 */
-.card:hover {
-  border-color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-3px);
-}
-
-.card-header {
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  background: rgba(50, 50, 50, 0.8);
+  border-color: #3eaf7c;
+  transform: translateX(4px); /* 悬停时向右微动，增加交互感 */
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .card-title {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #fff; /* 假设背景较深，使用白色文字 */
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-size: 1.15em;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .card-date {
   font-size: 0.85em;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.card-body {
-  font-size: 1em;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
-  word-break: break-all;
-  white-space: pre-wrap;
-  margin-bottom: 10px;
-}
-
-.card-footer {
-  font-size: 0.9em;
+.card-arrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   color: #3eaf7c;
-  text-align: right;
+  font-size: 0.9em;
   font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.card:hover .card-arrow {
+  opacity: 1;
 }
 
 .status-msg {
   text-align: center;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.7);
   padding: 40px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
 }
 </style>
