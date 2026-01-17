@@ -39,7 +39,9 @@ const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+// uploads 静态文件：同时支持 /uploads 与 /api/uploads 两种访问方式
 app.use('/uploads', express.static(uploadDir));
+app.use('/api/uploads', express.static(uploadDir));
 
 // --- 3. 图片上传配置 ---
 const storage = multer.diskStorage({
