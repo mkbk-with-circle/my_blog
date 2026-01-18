@@ -44,21 +44,9 @@ export default {
       return new Date(dateStr).toLocaleDateString();
     },
     goDetail: function(id) {
-      var path = this.$withBase('/pages/01a4c3/')
-
-      // 保持原逻辑：优先用 vue-router 带 query 跳转
-      try {
-        if (this.$router && this.$router.push) {
-          this.$router.push({ path: path, query: { id: id } })
-          return
-        }
-      } catch (e) {
-        // ignore and fallback
-      }
-
-      // 兜底：如果路由不可用/跳转失败，用原生跳转，保证 id 一定带上
-      window.location.href = path + '?id=' + encodeURIComponent(String(id))
+      return
     }
+
   }
 }
 </script>
