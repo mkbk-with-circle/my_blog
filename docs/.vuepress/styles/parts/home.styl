@@ -1,11 +1,11 @@
 // ============================================================
-// 首页特性卡片 (Features) - 极简线条风格
+// 首页特性卡片 (Features) - 极简毛玻璃风格
 // ============================================================
 .home-wrapper
   .features
     display grid !important
     grid-template-columns repeat(2, 1fr) // 2x2 布局
-    gap 30px                             // 增加间距，显得更大气
+    gap 30px                             // 增加间距
     max-width 900px
     margin 3rem auto !important
     padding 0 !important
@@ -20,24 +20,25 @@
     padding 2rem !important
     box-sizing border-box !important
     
-    // --- 核心修改：去掉模糊，仅保留极简边框 ---
-    background rgba(255, 255, 255, 0.03) !important // 极淡的底色，几乎看不见，但能辅助文字识别
-    backdrop-filter none !important                 // 彻底去掉模糊效果
-    -webkit-backdrop-filter none !important
+    // --- 核心修改：毛玻璃背景 ---
+    // 使用较低透明度的白色背景，确保白色文字在模糊背景下依然清晰
+    background rgba(255, 255, 255, 0.12) !important 
+    backdrop-filter blur(12px) !important
+    -webkit-backdrop-filter blur(12px) !important
     
-    // 细微边框：看得见但不显眼
-    border 1px solid rgba(255, 255, 255, 0.15) !important 
-    border-radius 12px !important                   // 稍微减小圆角，显得更干练
+    // 细微边框
+    border 1px solid rgba(255, 255, 255, 0.2) !important 
+    border-radius 12px !important
     
-    // 去掉重阴影，改用非常轻微的投影
-    box-shadow 0 4px 12px rgba(0, 0, 0, 0.1) !important
+    // 轻微投影
+    box-shadow 0 4px 12px rgba(0, 0, 0, 0.15) !important
     
     transition all 0.3s ease
     
     h2
       font-size 1.3rem !important
       font-weight 600 !important
-      color #fff !important
+      color #fff !important // 保持白色
       margin-bottom 0.8rem !important
       // 标题装饰线
       display flex
@@ -46,18 +47,18 @@
         content ''
         flex 1
         height 1px
-        background rgba(255, 255, 255, 0.1)
+        background rgba(255, 255, 255, 0.2)
         margin-left 15px
 
     p
-      color rgba(255, 255, 255, 0.7) !important // 文字调淡一点，增加高级感
+      color rgba(255, 255, 255, 0.9) !important // 保持白色（略带透明度增加高级感）
       line-height 1.6 !important
       font-size 0.9rem !important
       margin 0 !important
 
-    // 悬停交互：边框变亮，背景微显
+    // 悬停交互
     &:hover
-      background rgba(255, 255, 255, 0.08) !important
+      background rgba(255, 255, 255, 0.2) !important
       border-color rgba(255, 255, 255, 0.4) !important
       transform translateY(-4px) !important
 
