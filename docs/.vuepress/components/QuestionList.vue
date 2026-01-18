@@ -12,14 +12,11 @@
         role="button"
         tabindex="0"
       >
-        <!-- 左侧：可收缩  -->
         <div class="card-info">
-          <!-- 这里把 title 换成 content -->
           <div class="card-title" v-bind:title="item.content">{{ item.content }}</div>
           <div class="card-date">{{ formatDate(item.answered_at) }}</div>
         </div>
 
-        <!-- 右侧：固定宽度，不被挤压 -->
         <div class="card-arrow">
           <span class="card-arrow-text">查看详情</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -48,7 +45,19 @@ export default {
     },
     goDetail: function(id) {
       var path = this.$withBase('/pages/01a4c3/')
-      this.$router.push({ path: path, query: { id: id } })
+
+      // 保持原逻辑：优先用 vue-router 带 query 跳转
+      try {
+        if (this.$router && this.$router.push) {
+          this.$router.push({ path: path, query: { id: id } })
+          return
+        }
+      } catch (e) {
+        // ignore and fallback
+      }
+
+      // 兜底：如果路由不可用/跳转失败，用原生跳转，保证 id 一定带上
+      window.location.href = path + '?id=' + encodeURIComponent(String(id))
     }
   }
 }
@@ -81,7 +90,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px; /* 关键：左右留出固定间距 */
+  gap: 16px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -92,42 +101,36 @@ export default {
   transform: translateX(4px);
 }
 
-/* 关键：允许左侧在 flex 中真正“变窄” */
 .card-info {
   flex: 1 1 auto;
-  min-width: 0; /* 没有它，省略号经常不生效，且会把右侧挤乱 */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* 单行省略（你也可以改成两行省略，见下方说明） */
 .card-title {
   font-size: 1.15em;
   font-weight: 600;
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 
-  /* 允许换行显示完整标题 */
   white-space: normal;
   overflow: visible;
   text-overflow: clip;
 
-  /* 避免超长连续字符撑破布局（比如很多“你好你好...”不带空格） */
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-
 
 .card-date {
   font-size: 0.85em;
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* 关键：右侧固定宽度，不被标题挤压/换行 */
 .card-arrow {
   flex: 0 0 auto;
-  width: 96px;              /* 固定右侧区域宽度：保证排版稳定 */
+  width: 96px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -138,7 +141,7 @@ export default {
   font-weight: 500;
   opacity: 0.8;
   transition: opacity 0.3s;
-  white-space: nowrap;      /* 避免“查看详情”被拆行 */
+  white-space: nowrap;
 }
 
 .card:hover .card-arrow {

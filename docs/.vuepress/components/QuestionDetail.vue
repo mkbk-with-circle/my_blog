@@ -6,7 +6,7 @@
     <div v-else-if="item" class="detail-container">
       <div class="q-section">
         <div class="label-tag q-tag">提问</div>
-        <!-- 只显示问题内容 -->
+        <!-- 只保留一个内容展示，避免 title/content 重复 -->
         <p class="content">{{ item.content }}</p>
         <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
       </div>
@@ -36,14 +36,12 @@ export default {
   },
 
   computed: {
-    // 用 fullPath 做 key，路由（含 query）变化就强制刷新整块 DOM
     routeKey: function() {
       return (this.$route && this.$route.fullPath) ? this.$route.fullPath : String(Date.now())
     }
   },
 
   watch: {
-    // 关键：监听 fullPath（包含 query），保证点击不同详情一定触发
     '$route.fullPath': {
       immediate: true,
       handler: function() {
@@ -54,13 +52,14 @@ export default {
 
   methods: {
     getId: function() {
-      // 优先 Vue Router 的 query
+      // 1) 优先 Vue Router query
       var id = this.$route && this.$route.query ? this.$route.query.id : null
       if (id) return id
 
-      // 兜底：直接从 URL 取
+      // 2) 兜底：从 URL query 取
       try {
-        return new URLSearchParams(window.location.search).get('id')
+        var v = new URLSearchParams(window.location.search).get('id')
+        return v
       } catch (e) {
         return null
       }
@@ -79,7 +78,7 @@ export default {
       }
 
       var self = this
-      fetch('/api/questions/detail/' + id, { cache: 'no-store' })
+      fetch('/api/questions/detail/' + encodeURIComponent(String(id)), { cache: 'no-store' })
         .then(function(res) {
           if (!res.ok) throw new Error('接口返回 ' + res.status)
           return res.json()
@@ -119,7 +118,6 @@ export default {
 .label-tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.8em; margin-bottom: 15px; font-weight: bold; }
 .q-tag { background: rgba(255, 255, 255, 0.2); color: #fff; }
 .a-tag { background: #3eaf7c; color: #fff; }
-.q-title { margin: 0 0 15px 0; font-size: 1.5em; }
 .content, .answer { line-height: 1.8; white-space: pre-wrap; margin: 0; font-size: 1.1em; color: rgba(255, 255, 255, 0.9); }
 .q-img { max-width: 100%; border-radius: 8px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
 .footer-info { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; }

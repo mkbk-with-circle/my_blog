@@ -51,10 +51,10 @@ export default {
 
       var fd = new FormData();
 
-      // 兼容后端：自动生成 title（取内容前 20 个字，可自行改长度）
+      // 兼容后端：自动生成 title（不增加任何输入框，不影响现有交互）
+      // 取第一行前 20 字，避免换行导致 title 很怪
       var autoTitle = (this.content || '').trim().split('\n')[0].slice(0, 20);
       fd.append('title', autoTitle || '匿名提问');
-
 
       fd.append('content', this.content);
       if (this.file) fd.append('image', this.file);
@@ -95,7 +95,7 @@ export default {
 .ask-container{
   box-sizing: border-box;
   width: 100%;
-  max-width: 520px;   /* 控制表单最大宽度，避免横向铺太开 */
+  max-width: 520px;
   padding: 16px;
   margin-top: 16px;
 
