@@ -1,5 +1,5 @@
 // ============================================================
-// 首页特性卡片 (Features) - 极简毛玻璃风格
+// 首页特性卡片 (Features) - 极简毛玻璃风格（桌面端 2x2）
 // ============================================================
 .home-wrapper
   .features
@@ -19,22 +19,22 @@
     margin 0 !important
     padding 2rem !important
     box-sizing border-box !important
-    
+
     // --- 核心修改：毛玻璃背景 ---
     // 使用较低透明度的白色背景，确保白色文字在模糊背景下依然清晰
-    background rgba(255, 255, 255, 0.12) !important 
+    background rgba(255, 255, 255, 0.12) !important
     backdrop-filter blur(12px) !important
     -webkit-backdrop-filter blur(12px) !important
-    
+
     // 细微边框
-    border 1px solid rgba(255, 255, 255, 0.2) !important 
+    border 1px solid rgba(255, 255, 255, 0.2) !important
     border-radius 12px !important
-    
+
     // 轻微投影
     box-shadow 0 4px 12px rgba(0, 0, 0, 0.15) !important
-    
+
     transition all 0.3s ease
-    
+
     h2
       font-size 1.3rem !important
       font-weight 600 !important
@@ -62,26 +62,92 @@
       border-color rgba(255, 255, 255, 0.4) !important
       transform translateY(-4px) !important
 
-// --- 首页移动端优化：让首屏更紧凑、更清晰 ---
+
+// ============================================================
+// 移动端：首页优化
+// 1) Hero：背景更暗、白字更清晰（遮罩 + 文字阴影）
+// 2) Features：改为左右滑动切换（横向滚动 + scroll-snap）
+// ============================================================
 @media (max-width: 719px)
   .home-wrapper
+    // --- 1) 让首屏更紧凑 ---
     .hero
       padding-top 2.5rem !important
       padding-bottom 1.5rem !important
+      position relative // 为遮罩定位
+
+      // 文字层级抬高，避免被遮罩盖住
+      > *
+        position relative
+        z-index 2
 
       h1
         font-size 2rem !important
         line-height 1.2 !important
+        color #fff !important
+        text-shadow 0 2px 10px rgba(0,0,0,0.55) !important
 
       .description
         font-size 1rem !important
         line-height 1.6 !important
+        color rgba(255,255,255,0.92) !important
+        text-shadow 0 1px 8px rgba(0,0,0,0.5) !important
 
       // 可选：让按钮不要太大
       .action-button
         padding 0.55rem 1.2rem !important
         font-size 1rem !important
 
-    // 如果你觉得背景太“花”，可选：加深遮罩以增强文字对比度
+      // --- 1.1) 加深遮罩：解决“手机端背景偏白导致白字不明显” ---
+      // 用 ::after 自己加一层遮罩（比你之前的 ::before 更稳，不依赖主题是否已有 ::before）
+      &::after
+        content ''
+        position absolute
+        left 0
+        top 0
+        right 0
+        bottom 0
+        background rgba(0,0,0,0.42) !important // 0.35~0.50 自行微调
+        pointer-events none
+        z-index 1
+
+    // 保留你之前写的：如果主题确实用到了 ::before，这条也能一起加深
     .hero::before
-      background rgba(0,0,0,0.35) !important
+      background rgba(0,0,0,0.42) !important
+
+
+    // --- 2) Features：移动端改成横向滑动切换 ---
+    .features
+      // 覆盖桌面端 grid
+      display flex !important
+      flex-wrap nowrap !important
+
+      overflow-x auto !important
+      overflow-y hidden !important
+      -webkit-overflow-scrolling touch
+
+      // 吸附效果：滑动停下自动对齐一张卡片
+      scroll-snap-type x mandatory
+
+      // 间距与边距（让左右滑更舒服）
+      gap 14px !important
+      padding 0 16px !important
+      margin 2rem 0 !important
+
+      // 可选：隐藏滚动条
+      scrollbar-width none
+      &::-webkit-scrollbar
+        display none
+
+    .feature
+      // 每次“切换”对齐到卡片起点
+      scroll-snap-align start
+
+      // 一屏基本一张（露一点下一张提示可滑）
+      flex 0 0 86% !important
+      max-width 86% !important
+      width auto !important
+
+      // 手指滑动时不要触发 hover 的位移（移动端体验更稳）
+      &:hover
+        transform none !important
