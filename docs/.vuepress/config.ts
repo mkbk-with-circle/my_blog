@@ -27,6 +27,7 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
     // 导航配置（已根据你删除后的目录进行了精简）
     nav: [
       { text: '首页', link: '/' },
+      { text: '提问箱', link: '/box/' }, // ✅ 新增：提问箱入口（在首页右边）
       {
         text: '索引',
         link: '/archives/',
@@ -37,16 +38,15 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
         ],
       },
       { text: '关于', link: '/about/' },
-
     ],
-    sidebarDepth: 2, 
-    logo: '/img/logo.png', 
+    sidebarDepth: 2,
+    logo: '/img/logo.png',
     buttonHideCategory: false, // 是否隐藏分类按钮
     // repo: 'your-github/blog', // 建议换成你自己的 Github 仓库地址
-    searchMaxSuggestions: 10, 
-    lastUpdated: '上次更新', 
-    docsDir: 'docs', 
-    editLinks: true, 
+    searchMaxSuggestions: 10,
+    lastUpdated: '上次更新',
+    docsDir: 'docs',
+    editLinks: true,
     editLinkText: '编辑',
 
     //*** Vdoing 主题相关配置 ***//
@@ -54,7 +54,7 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
 
     // 文章默认的作者信息
     author: {
-      name: '玛卡巴卡', 
+      name: '玛卡巴卡',
     },
 
     // 博主信息 (显示在首页侧边栏)
@@ -80,9 +80,9 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
         {
           iconClass: 'icon-erji',
           title: '玛卡巴卡的网易云歌单',
-          link: 'https://music.163.com/playlist?id=12761001493&uct2=U2FsdGVkX19e8vqB3vn5caYd4/kYQIkIymRiN8QCCxg=', // 你的网易云歌单
+          link: 'https://music.163.com/playlist?id=12761001493&uct2=U2FsdGVkX19e8vqB3vn5caYd4/kYQIkIymRiN8QCCxg=',
         },
-            {
+        {
           iconClass: 'icon-qq',
           title: 'QQ联系我',
           link: 'qq:2186431514',
@@ -92,9 +92,9 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
 
     // 页脚信息
     footer: {
-      createYear: 2026, 
+      createYear: 2026,
       copyrightInfo:
-        '玛卡巴卡 | MIT License', 
+        '玛卡巴卡 | MIT License',
     },
 
     extendFrontmatter: {
@@ -102,8 +102,8 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
         name: '玛卡巴卡',
       }
     },
-    // htmlModuless
   },
+
 
   // 注入到页面<head>中的标签
   head: [
