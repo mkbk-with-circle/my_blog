@@ -89,3 +89,105 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* 让表单整体成为一个“独立盒子”，不被外层主题挤压 */
+.ask-container{
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;   /* 控制表单最大宽度，避免横向铺太开 */
+  padding: 16px;
+  margin-top: 16px;
+
+  background: rgba(30, 30, 30, 0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 强制每组输入独占一行，避免被全局样式搞成 inline/float */
+.input-group{
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+/* label 强制块级，避免跑到输入框旁边 */
+.input-group label{
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  color: rgba(255,255,255,0.8);
+}
+
+/* textarea 强制占满容器宽度 */
+textarea{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+
+  color: #fff;
+  padding: 10px 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+textarea:focus{
+  border-color: #3eaf7c;
+}
+
+/* file input 也强制块级，避免和文字挤在一行 */
+input[type="file"]{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  color: rgba(255,255,255,0.85);
+}
+
+/* 按钮全宽且稳定 */
+.submit-btn{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+
+  background: #3eaf7c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.submit-btn:disabled{
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.preview{
+  margin-top: 10px;
+}
+
+.preview img{
+  display: block;
+  max-width: 140px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.msg{
+  margin-top: 12px;
+  font-size: 0.95em;
+  text-align: center;
+}
+
+.msg.err{ color: #ff6b6b; }
+.msg.ok{ color: #3eaf7c; }
+</style>
