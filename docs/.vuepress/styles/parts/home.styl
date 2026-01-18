@@ -62,9 +62,26 @@
       border-color rgba(255, 255, 255, 0.4) !important
       transform translateY(-4px) !important
 
-// --- 移动端适配 ---
+// --- 首页移动端优化：让首屏更紧凑、更清晰 ---
 @media (max-width: 719px)
-  .home-wrapper .features
-    grid-template-columns 1fr !important
-    gap 15px
-    padding 0 20px !important
+  .home-wrapper
+    .hero
+      padding-top 2.5rem !important
+      padding-bottom 1.5rem !important
+
+      h1
+        font-size 2rem !important
+        line-height 1.2 !important
+
+      .description
+        font-size 1rem !important
+        line-height 1.6 !important
+
+      // 可选：让按钮不要太大
+      .action-button
+        padding 0.55rem 1.2rem !important
+        font-size 1rem !important
+
+    // 如果你觉得背景太“花”，可选：加深遮罩以增强文字对比度
+    .hero::before
+      background rgba(0,0,0,0.35) !important
