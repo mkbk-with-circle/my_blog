@@ -6,7 +6,7 @@
     <div v-else-if="item" class="detail-container">
       <div class="q-section">
         <div class="label-tag q-tag">提问</div>
-        <h3 class="q-title">{{ item.title }}</h3>
+        <!-- 只显示问题内容 -->
         <p class="content">{{ item.content }}</p>
         <img v-if="item.image_url" v-bind:src="'/api' + item.image_url" class="q-img" />
       </div>

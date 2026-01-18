@@ -12,9 +12,10 @@
         role="button"
         tabindex="0"
       >
-        <!-- 左侧：可收缩 + 标题省略 -->
+        <!-- 左侧：可收缩  -->
         <div class="card-info">
-          <div class="card-title" v-bind:title="item.title">{{ item.title }}</div>
+          <!-- 这里把 title 换成 content -->
+          <div class="card-title" v-bind:title="item.content">{{ item.content }}</div>
           <div class="card-date">{{ formatDate(item.answered_at) }}</div>
         </div>
 
