@@ -21,16 +21,12 @@
     box-sizing border-box !important
 
     // --- 核心修改：毛玻璃背景 ---
-    // 使用较低透明度的白色背景，确保白色文字在模糊背景下依然清晰
     background rgba(255, 255, 255, 0.12) !important
     backdrop-filter blur(12px) !important
     -webkit-backdrop-filter blur(12px) !important
 
-    // 细微边框
     border 1px solid rgba(255, 255, 255, 0.2) !important
     border-radius 12px !important
-
-    // 轻微投影
     box-shadow 0 4px 12px rgba(0, 0, 0, 0.15) !important
 
     transition all 0.3s ease
@@ -38,9 +34,8 @@
     h2
       font-size 1.3rem !important
       font-weight 600 !important
-      color #fff !important // 保持白色
+      color #fff !important
       margin-bottom 0.8rem !important
-      // 标题装饰线
       display flex
       align-items center
       &::after
@@ -51,12 +46,11 @@
         margin-left 15px
 
     p
-      color rgba(255, 255, 255, 0.9) !important // 保持白色（略带透明度增加高级感）
+      color rgba(255, 255, 255, 0.9) !important
       line-height 1.6 !important
       font-size 0.9rem !important
       margin 0 !important
 
-    // 悬停交互
     &:hover
       background rgba(255, 255, 255, 0.2) !important
       border-color rgba(255, 255, 255, 0.4) !important
@@ -65,115 +59,55 @@
 
 // ============================================================
 // 移动端：首页优化
-// 1) Hero：背景更暗、白字更清晰（遮罩 + 文字阴影）
-// 2) Features：改为左右滑动切换（横向滚动 + scroll-snap）
+// 1) Hero 文案改黑色（不再调暗背景）
+// 2) 移动端隐藏主题默认 features，使用 <FeaturesCarousel />
 // ============================================================
 @media (max-width: 719px)
   .home-wrapper
-    // --- 1) 让首屏更紧凑 ---
+    // --- 1) Hero 更紧凑 + 文字改黑色 ---
     .hero
       padding-top 2.5rem !important
       padding-bottom 1.5rem !important
-      position relative // 为遮罩定位
-
-      // 文字层级抬高，避免被遮罩盖住
-      > *
-        position relative
-        z-index 2
 
       h1
         font-size 2rem !important
         line-height 1.2 !important
-        color #fff !important
-        text-shadow 0 2px 10px rgba(0,0,0,0.55) !important
+        color #111 !important
+        text-shadow none !important
 
       .description
         font-size 1rem !important
         line-height 1.6 !important
-        color rgba(255,255,255,0.92) !important
-        text-shadow 0 1px 8px rgba(0,0,0,0.5) !important
+        color rgba(0, 0, 0, 0.78) !important
+        text-shadow none !important
 
-      // 可选：让按钮不要太大
+      // 按钮也改成更适合浅色背景的样式
       .action-button
         padding 0.55rem 1.2rem !important
         font-size 1rem !important
+        background rgba(255,255,255,0.85) !important
+        color #111 !important
+        border 1px solid rgba(0,0,0,0.12) !important
+        box-shadow 0 6px 16px rgba(0,0,0,0.10) !important
 
-      // --- 1.1) 加深遮罩：解决“手机端背景偏白导致白字不明显” ---
-      // 用 ::after 自己加一层遮罩（比你之前的 ::before 更稳，不依赖主题是否已有 ::before）
-      &::after
-        content ''
-        position absolute
-        left 0
-        top 0
-        right 0
-        bottom 0
+      // 你截图里标题区有一块灰色背景容器（主题可能是 .hero-text）
+      // 一并调成浅色底 + 深色字，确保可读性
+      .hero-text, .hero-info, .hero-content
+        color #111 !important
+        text-shadow none !important
 
-        // 1) 直接压暗（最可靠）
-        background rgba(0,0,0,0.55) !important
-
-        // 2) 在支持的浏览器上进一步“降低背景亮度”
-        //（不支持也没关系，会忽略）
-        backdrop-filter brightness(0.75)
-        -webkit-backdrop-filter brightness(0.75)
-
-        pointer-events none
-        z-index 1
-
-
-    // 保留你之前写的：如果主题确实用到了 ::before，这条也能一起加深
-    .hero::before
-      background rgba(0,0,0,0.55) !important
-
-
-    // --- 2) Features：移动端改成横向滑动切换 ---
-    .features
-      // 覆盖桌面端 grid
-      display flex !important
-      flex-wrap nowrap !important
-
-      overflow-x auto !important
-      overflow-y hidden !important
-      -webkit-overflow-scrolling touch
-
-      // 吸附效果：滑动停下自动对齐一张卡片
-      scroll-snap-type x mandatory
-
-      // 间距与边距（让左右滑更舒服）
-      gap 14px !important
-      padding 0 16px !important
-      margin 2rem 0 !important
-
-      // 可选：隐藏滚动条
-      scrollbar-width none
-      &::-webkit-scrollbar
-        display none
-
-    .feature
-      // 每次“切换”对齐到卡片起点
-      scroll-snap-align start
-
-      // 一屏基本一张（露一点下一张提示可滑）
-      flex 0 0 86% !important
-      max-width 86% !important
-      width auto !important
-
-      // 手指滑动时不要触发 hover 的位移（移动端体验更稳）
-      &:hover
-        transform none !important
-
-
-// ============================================================
-// 手机端：隐藏主题默认 features，显示自定义轮播（带左右按钮）
-// 桌面端：隐藏轮播，仍使用默认 2x2 features
-// ============================================================
-@media (max-width: 719px)
-  .home-wrapper
+    // --- 2) 移动端：隐藏主题自带 features（避免出现“技术分享/随笔日记...”那套重复卡片）---
     .features
       display none !important
 
+  // 显示你的滑动组件
   .features-carousel
     display block !important
 
+
+// ============================================================
+// 桌面端：隐藏轮播，仍使用默认 2x2 features
+// ============================================================
 @media (min-width: 720px)
   .features-carousel
     display none !important
